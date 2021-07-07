@@ -2,7 +2,7 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 import openpyxl as xl
-import pickle_sections as pxs
+import Resources.pickle_sections as pxs
 
 
 class Section():
@@ -51,7 +51,7 @@ class AISC():
 	def __init__(self, AISCName):		
 		#the database is preserved in the pickleditem.txt file for speed
 		try:
-			data, labels = pxs.unPickleObject('pickleditem.txt')
+			data, labels = pxs.unPickleObject()
 			self.data = data
 			self.labels = labels
 		except:
@@ -61,19 +61,16 @@ class AISC():
 			self.labels = labels
 		
 		#index is the row of the shape.
-		index = [i for i, s in enumerate(labels) if AISCName in s]
-		self.row_number = index[0]
-		
-		#find the row of the AISC Shape from the database
-		#for row_num in range(1, 2093):
-		#	row_value = self.sheet2.cell(column=2, row=row_num)
-		#	if row_value.value == AISCName:
-		#		self.row_number = row_num
-		#		break
+		try:
+			index = [i for i, s in enumerate(labels) if AISCName in s]
+			self.row_number = index[0]
+		except IndexError:
+			raise ValueError("Shape ID not a valid AISC Shape")
 		
 		#assign values from the database as properties
 		def item(col):
 			return self.data[self.row_number][col]
+		self.W = item(4)
 		self.A = item(5)
 		self.Ix = item(38)
 		self.Iy = item(42)
@@ -93,9 +90,10 @@ class AISC():
 		row_num = self.row_number
 		data = self.data
 		
+		print('Here are the properties')
 		print('Section %s in row %i' % (data[row_num][2], row_num))
 		
-		for col in range(5, 84):
+		for col in range(4, 84):
 			colname = data[0][col]
 			val = data[row_num][col]
 			if val == '–':
@@ -116,7 +114,7 @@ class generalSection(Section):
 	"""This is a general cross section. Define custom properties
 	you want to use without defining points"""
 
-	def __init__(self, Ix=1, Q=1, A=1):
+	def __init__(self, Ix=None, Q=None, A=None):
 		self.Ix = Ix
 		self.Q = Q
 		self.A = A

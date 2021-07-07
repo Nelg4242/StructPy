@@ -1,3 +1,4 @@
+
 class Steel():
 	
 	def __init__(self, E=29000, Fy=50, Fu=85, cost=0):
@@ -24,3 +25,19 @@ class A36(Steel):
 		self.Fy = 36 #ksi
 		self.Fu = 58 #ksi
 		self.poisson = 0.26
+		
+		
+class Custom():
+	"""
+	>>> ma1 = Custom(E=29000, fy=60)
+	"""
+	def __init__(self, E=None, fy=None):
+		"""
+		>>> ma1 = Custom(E=29000, fy=60)
+		>>> ma1.E
+		29000
+		>>> ma1.fy
+		60
+		"""
+		self.E = E
+		self.fy = fy
